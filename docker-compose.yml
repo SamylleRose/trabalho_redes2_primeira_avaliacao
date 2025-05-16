@@ -1,0 +1,298 @@
+services:
+  r1:
+    environment:
+      - rtr_nome=R1
+      - rtr_ip=172.20.1.3
+      - vizinhanca={""R2":["172.20.2.3",1],R4":["172.20.4.3",1], R5":["172.20.5.3",1]}
+
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_6:
+        ipv4_address: 172.20.6.2
+      sn_2:
+        ipv4_address: 172.20.2.4
+      sn_1:
+        ipv4_address: 172.20.1.3
+
+    cap_add:
+      - NET_ADMIN
+  r2:
+    environment:
+      - rtr_nome=R2
+      - rtr_ip=172.20.2.3
+      - vizinhanca={"R1":["172.20.1.3",1],"R3":["172.20.3.3",1]}
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_1:
+        ipv4_address: 172.20.1.2
+      sn_3:
+        ipv4_address: 172.20.3.4
+      sn_2:
+        ipv4_address: 172.20.2.3
+    cap_add:
+      - NET_ADMIN
+  r3:
+    environment:
+      - rtr_nome=R3
+      - rtr_ip=172.20.3.3
+      - vizinhanca={"R2":["172.20.2.3",1],"R4":["172.20.4.3",1]}
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_2:
+        ipv4_address: 172.20.2.2
+      sn_4:
+        ipv4_address: 172.20.4.4
+      sn_3:
+        ipv4_address: 172.20.3.3
+    cap_add:
+      - NET_ADMIN
+  r4:
+    environment:
+      - rtr_nome=R4
+      - rtr_ip=172.20.4.3
+      - vizinhanca={"R3":["172.20.3.3",1],"R1":["172.20.1.3",1]}
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_3:
+        ipv4_address: 172.20.3.2
+      sn_5:
+        ipv4_address: 172.20.5.4
+      sn_4:
+        ipv4_address: 172.20.4.3
+    cap_add:
+      - NET_ADMIN
+  r5:
+    environment:
+      - rtr_nome=R5
+      - rtr_ip=172.20.5.3
+      - vizinhanca={"R1":["172.20.1.3",1],"R6":["172.20.6.3",1]}
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_4:
+        ipv4_address: 172.20.4.2
+      sn_6:
+        ipv4_address: 172.20.6.4
+      sn_5:
+        ipv4_address: 172.20.5.3
+    cap_add:
+      - NET_ADMIN
+  r6:
+    environment:
+      - rtr_nome=R6
+      - rtr_ip=172.20.6.3
+      - vizinhanca={"R6":["172.20.6.3",1]}
+    build:
+      context: ./router
+      dockerfile: Dockerfile
+    networks:
+      sn_5:
+        ipv4_address: 172.20.5.2
+      sn_1:
+        ipv4_address: 172.20.1.4
+      sn_6:
+        ipv4_address: 172.20.6.3
+    cap_add:
+      - NET_ADMIN
+  host1_1:
+    environment:
+      - rtr_ip=172.20.1.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_1:
+        ipv4_address: 172.20.1.11
+    depends_on:
+      - r1
+    cap_add:
+      - NET_ADMIN
+  host1_2:
+    environment:
+      - rtr_ip=172.20.1.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_1:
+        ipv4_address: 172.20.1.12
+    depends_on:
+      - r1
+    cap_add:
+      - NET_ADMIN
+  host2_1:
+    environment:
+      - rtr_ip=172.20.2.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_2:
+        ipv4_address: 172.20.2.11
+    depends_on:
+      - r2
+    cap_add:
+      - NET_ADMIN
+  host2_2:
+    environment:
+      - rtr_ip=172.20.2.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_2:
+        ipv4_address: 172.20.2.12
+    depends_on:
+      - r2
+    cap_add:
+      - NET_ADMIN
+  host3_1:
+    environment:
+      - rtr_ip=172.20.3.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_3:
+        ipv4_address: 172.20.3.11
+    depends_on:
+      - r3
+    cap_add:
+      - NET_ADMIN
+  host3_2:
+    environment:
+      - rtr_ip=172.20.3.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_3:
+        ipv4_address: 172.20.3.12
+    depends_on:
+      - r3
+    cap_add:
+      - NET_ADMIN
+  host4_1:
+    environment:
+      - rtr_ip=172.20.4.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_4:
+        ipv4_address: 172.20.4.11
+    depends_on:
+      - r4
+    cap_add:
+      - NET_ADMIN
+  host4_2:
+    environment:
+      - rtr_ip=172.20.4.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_4:
+        ipv4_address: 172.20.4.12
+    depends_on:
+      - r4
+    cap_add:
+      - NET_ADMIN
+  host5_1:
+    environment:
+      - rtr_ip=172.20.5.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_5:
+        ipv4_address: 172.20.5.11
+    depends_on:
+      - r5
+    cap_add:
+      - NET_ADMIN
+  host5_2:
+    environment:
+      - rtr_ip=172.20.5.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_5:
+        ipv4_address: 172.20.5.12
+    depends_on:
+      - r5
+    cap_add:
+      - NET_ADMIN
+  host6_1:
+    environment:
+      - rtr_ip=172.20.6.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_6:
+        ipv4_address: 172.20.6.11
+    depends_on:
+      - r6
+    cap_add:
+      - NET_ADMIN
+  host6_2:
+    environment:
+      - rtr_ip=172.20.6.3
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    networks:
+      sn_6:
+        ipv4_address: 172.20.6.12
+    depends_on:
+      - r6
+    cap_add:
+      - NET_ADMIN
+networks:
+  sn_1:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.1.0/24
+          gateway: 172.20.1.1
+  sn_2:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.2.0/24
+          gateway: 172.20.2.1
+  sn_3:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.3.0/24
+          gateway: 172.20.3.1
+  sn_4:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.4.0/24
+          gateway: 172.20.4.1
+  sn_5:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.5.0/24
+          gateway: 172.20.5.1
+  sn_6:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.6.0/24
+          gateway: 172.20.6.1
