@@ -2,17 +2,9 @@
 from typing import Dict, Tuple, Any
 
 def dijkstra(origem: str, lsdb: Dict[str, Any]) -> Dict[str, str]:
-    """Calcula os caminhos mais curtos do roteador de origem para todos os outros na rede.
+    #Calcula os caminhos mais curtos do roteador de origem para todos os outros na rede.
     
-    Args:
-        origem: Endereço IP do roteador de origem
-        lsdb: Banco de dados de estado de enlace (topologia da rede)
-        
-    Returns:
-        Dicionário mapeando roteadores de destino para seus próximos saltos
-    """
-
-    # Passo 1: Construir o grafo da rede a partir do LSDB
+    #Construir o grafo da rede a partir do LSDB
     grafo = {}
     for idRouter, lsa in lsdb.items():
         vizinhanca = {}
@@ -24,13 +16,13 @@ def dijkstra(origem: str, lsdb: Dict[str, Any]) -> Dict[str, str]:
                 vizinhanca[ip] = custo
         grafo[idRouter] = vizinhanca  # Adiciona ao grafo
         
-    # Passo 2: Inicializa estruturas de dados do Dijkstra
+    # Inicializa estruturas de dados do Dijkstra
     distancias = {i: float('inf') for i in grafo}  # Todas distâncias começam infinitas
     anterior = {i: None for i in grafo}  # Nó anterior no caminho ótimo
     distancias[origem] = 0  # Distância para si mesmo é zero
     visitados = set()  # Conjunto de nós já processados
     
-    # Passo 3: Loop principal do algoritmo Dijkstra
+    # Loop principal do algoritmo Dijkstra
     while len(visitados) < len(grafo):
         # Encontra o nó não visitado com menor distância conhecida
         x = min((i for i in grafo if i not in visitados), 
@@ -44,7 +36,7 @@ def dijkstra(origem: str, lsdb: Dict[str, Any]) -> Dict[str, str]:
                 distancias[v] = distancias[x] + c  # Atualiza distância
                 anterior[v] = x  # Atualiza caminho
                 
-    # Passo 4: Constrói tabela de roteamento a partir dos caminhos
+    # Constrói tabela de roteamento a partir dos caminhos
     tabela = {}
     for destino in grafo:
         # Ignora a origem e nós inalcançáveis

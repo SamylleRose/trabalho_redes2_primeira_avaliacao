@@ -1,22 +1,19 @@
-# Importações de bibliotecas necessárias
-import json  # Para trabalhar com dados JSON
-import os  # Para acessar variáveis de ambiente
-import time  # Para manipulação de tempo
-import threading  # Para execução em threads paralelas
-import socket  # Para comunicação de rede
-import subprocess  # Para executar comandos do sistema
-from typing import Dict, Tuple, Any  # Para tipagem de dados
-from dijkstra import dijkstra  # Algoritmo de cálculo de rotas
-from lsa import LSA  # Para criação de pacotes LSA (Link-State Advertisement)
-
-
-
+import json  
+import os  
+import time  
+import threading  
+import socket  
+import subprocess  
 import os
 import subprocess
+from typing import Dict, Tuple, Any  
+from dijkstra import dijkstra  
+from lsa import LSA  
 from typing import Dict, Tuple, Any
 
+
 def configurar_rota_padrao():
-    """Substitui a funcionalidade do start.sh"""
+
     rtr_ip = os.getenv("rtr_ip")
     if not rtr_ip:
         print("A variável rtr_ip não está definida!")
@@ -35,10 +32,6 @@ def configurar_rota_padrao():
 if __name__ == "__main__":
     configurar_rota_padrao()
 
-
-
-
-
 # Configurações globais do roteador
 RTR_IP = os.getenv("rtr_ip")  # IP do roteador (definido por variável de ambiente)
 RTR_NAME = os.getenv("rtr_nome")  # Nome do roteador (variável de ambiente)
@@ -46,11 +39,11 @@ NGH = json.loads(os.getenv("vizinhanca"))  # Vizinhança (vizinhos e custos em J
 PORTA_LSA = 5000  # Porta UDP para comunicação LSA
 
 class Configuracoes:
-    """Classe responsável por manipular as rotas do sistema"""
+    #Classe responsável por manipular as rotas do sistema
     
     @staticmethod
     def obter_rotas(rotas: Dict[str, str]) -> Tuple[Dict[str, str], Dict[str, str]]:
-        """Compara rotas calculadas com rotas existentes no sistema"""
+        #Compara rotas calculadas com rotas existentes no sistema
         rotas_existentes = {}  # Rotas já configuradas
         rotas_sistema = {}  # Rotas padrão do sistema
         adicionar = {}  # Rotas a serem adicionadas
@@ -106,7 +99,7 @@ class Configuracoes:
         
     @staticmethod
     def adicionar_rotas(salto: str, destino: str) -> bool:
-        """Adiciona uma nova rota ao sistema"""
+        #Adiciona uma nova rota ao sistema
         try:
             # Formata o destino para o padrão de rede
             p = destino.split('.')
@@ -127,7 +120,7 @@ class Configuracoes:
     
     @staticmethod
     def substitui_rotas(salto: str, destino: str) -> bool:
-        """Substitui uma rota existente"""
+        #Substitui uma rota existente
         try:
             # Formata o destino para o padrão de rede
             p = destino.split('.')
@@ -145,7 +138,7 @@ class Configuracoes:
     
     @staticmethod
     def configurar_inter(lsdb: Dict[str, Any]) -> None:
-        """Configura as rotas no sistema com base no LSDB"""
+        #Configura as rotas no sistema com base no LSDB
         # Calcula as melhores rotas usando Dijkstra
         rotas = dijkstra(RTR_IP, lsdb)
         
@@ -169,26 +162,26 @@ class Configuracoes:
             Configuracoes.substitui_rotas(salto, destino)
 
 class Log:
-    """Classe para registro de logs formatados"""
+    #Classe para registro de logs formatados
     
     @staticmethod
     def log(msg: str) -> None:
-        """Registra uma mensagem de log com timestamp"""
+        #Registra uma mensagem de log com timestamp
         timestmp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         print(f"[{RTR_IP}] {msg} - {timestmp}", flush=True)
 
 class Roteador:
-    """Classe principal que implementa o roteador"""
+    #Classe principal que implementa o roteador
     
     def __init__(self) -> None:
-        """Inicializa o roteador"""
+        #Inicializa o roteador
         self.lsdb = {}  # Banco de dados de estados de enlace
         self.thread = threading.Lock()  # Lock para sincronização de threads
         
         Log.log(f"Iniciando o roteador!")
         
     def enviar_pacotes(self) -> None:
-        """Envia pacotes LSA periodicamente para vizinhos"""
+        #Envia pacotes LSA periodicamente para vizinhos
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sequencia = 0
@@ -214,7 +207,7 @@ class Roteador:
             time.sleep(10)  # Espera 10 segundos entre envios
             
     def receber_pacotes(self) -> None:
-        """Recebe pacotes LSA de outros roteadores"""
+        #Recebe pacotes LSA de outros roteadores
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -254,7 +247,7 @@ class Roteador:
                 Log.log(f"Erro inesperado ao receber LSA: {error}")
           
     def salvar_lsdb(self, lsdb: Dict[str, Any]) -> None:
-        """Salva o LSDB em um arquivo JSON"""
+        #Salva o LSDB em um arquivo JSON
         try:
             with open("lsdb.json", "w") as file:
                 json.dump(lsdb, file, indent=4)

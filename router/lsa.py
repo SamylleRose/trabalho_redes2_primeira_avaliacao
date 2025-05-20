@@ -1,33 +1,19 @@
-# Importa o módulo 'os' para interagir com o sistema operacional
 import os
-
-# Importa o módulo 'json' para trabalhar com dados no formato JSON
 import json
 
 # Obtém o IP do roteador a partir de uma variável de ambiente chamada "rtr_ip"
-# Variáveis de ambiente são configurações externas ao código que podem ser definidas no sistema
 RTR_IP = os.getenv("rtr_ip")
 
 # Obtém e converte a vizinhança do roteador a partir de uma variável de ambiente JSON chamada "vizinhanca"
-# json.loads() converte uma string JSON em um objeto Python (dicionário, lista, etc.)
 NGH = json.loads(os.getenv("vizinhanca"))
 
 class LSA:
-    """Classe para criação de pacotes LSA (Link-State Advertisement)"""
+    #Classe para criação de pacotes LSA (Link-State Advertisement)
     
     @staticmethod
     def criar_pacote(sequencia: int):
-        """Cria um pacote LSA com informações do roteador
-        
-        Args:
-            sequencia (int): Número de sequência para controle de versão do pacote
-            
-        Returns:
-            dict: Pacote LSA contendo:
-                - id: IP do roteador que originou o pacote
-                - vizinhanca: Informações dos roteadores vizinhos
-                - seq: Número de sequência
-        """
+        #Cria um pacote LSA com informações do roteador
+      
         pacote = {
             "id": RTR_IP,               # Identificador do roteador (seu IP)
             "vizinhanca": NGH,          # Lista de vizinhos e custos dos enlaces
