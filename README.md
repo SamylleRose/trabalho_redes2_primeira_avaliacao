@@ -30,9 +30,9 @@ simulação e sob carga.
    git clone [https://github.com/SamylleRose/trabalho_redes2_primeira_avaliacao.git]
 
 2. Inicie a topologia:
-
+   ```bash
    docker-compose up --build
-
+   ```
 3. Para testar a conectividade entre hosts:
 
     Para verificar a conectividade entre todos os hosts:
@@ -45,23 +45,64 @@ simulação e sob carga.
 
 ## 📡 Justificativa dos Protocolos Escolhidos
 
-### UDP para Pacotes LSA
+A seleção dos protocolos de rede para esta simulação foi uma decisão estratégica, 
+visando demonstrar de forma eficaz os princípios de conectividade, resiliência e 
+desempenho em um ambiente de rede dinâmico e complexo. A escolha recaiu sobre o 
+**OSPF (Open Shortest Path First)** para o roteamento dinâmico e o **UDP (User Datagram Protocol)** 
+como protocolo de transporte subjacente (para as mensagens OSPF), justificada pelos seguintes pontos:
 
-Eficiência: Pacotes LSA são pequenos e frequentes. UDP evita overhead de conexão.
+### OSPF (Open Shortest Path First)
 
-Tolerância a perdas: O protocolo link-state é resiliente a pacotes perdidos 
-(atualizações periódicas compensam perdas).
+1.  **Protocolo Link-State:** O OSPF é um protocolo de estado de enlace, o que significa que cada roteador 
+mantém uma visão completa e precisa da topologia da rede. Esta característica é fundamental para a 
+simulação, pois permite:
+    * **Cálculo de Rotas Otimizadas:** Utiliza o algoritmo de Dijkstra (SPF) para determinar os caminhos 
+    mais curtos e eficientes para cada destino, garantindo o roteamento ideal na rede simulada.
+    * **Observação Clara da Convergência:** Essencial para a análise do "Tempo de Convergência", pois a 
+    reconstrução da topologia e o recálculo de rotas são transparentes e baseados em informações consistentes 
+    entre todos os roteadores.
 
-Multicast/Não-confiável: Natural para flooding de atualizações de topologia.
+2.  **Convergência Rápida e Resiliência a Falhas:** O OSPF é conhecido por sua capacidade de reagir rapidamente a 
+mudanças na topologia. Ao detectar uma falha (e.g., link ou roteador), ele propaga atualizações de estado de enlace (LSAs) 
+rapidamente, permitindo que a rede recalcule as rotas e restabeleça a conectividade com agilidade. Isso é crucial para as 
+métricas de resiliência que o projeto busca avaliar.
 
-Número de porta 5000: Porta alta não privilegiada, evitando conflitos.
+3.  **Escalabilidade e Ampla Adoção:** Apesar da escala da simulação, o modelo hierárquico do OSPF 
+(através de áreas) demonstra sua robustez para redes maiores, conferindo relevância prática ao 
+projeto, pois as dinâmicas observadas são aplicáveis a cenários de redes corporativas e de provedores de serviço.
+
+### UDP (User Datagram Protocol)
+
+A utilização do UDP para o transporte das mensagens OSPF (como os Link-State Advertisements - LSAs) é
+ uma escolha otimizada e alinhada com as necessidades de um protocolo de roteamento dinâmico:
+
+1.  **Eficiência e Baixo Overhead:**
+    * **Protocolo Sem Conexão:** O UDP não exige o estabelecimento de uma conexão prévia (handshake), 
+    o que elimina o overhead de configuração e encerramento de sessão presente no TCP.
+    * **Leveza para Mensagens Frequentes:** As mensagens OSPF (especialmente os Hellos e LSAs) são 
+    frequentemente pequenas e de natureza controlada pelo próprio protocolo de roteamento. O baixo 
+    overhead do UDP garante que essas trocas de informação ocorram com a máxima eficiência, minimizando a latência.
+
+2.  **Tolerância e Gerenciamento de Confiabilidade pelo OSPF:**
+    * **Confiabilidade da Aplicação:** O OSPF, como protocolo de roteamento, implementa seus próprios mecanismos 
+    robustos para garantir a entrega e a consistência das informações de roteamento (e.g., números de sequência 
+    para LSAs, retransmissões internas, e acknowledgments para garantir a sincronização da base de dados).
+    * A natureza inerentemente "não confiável" do UDP no transporte é, portanto, aceitável e até desejável, pois 
+    evita uma duplicação desnecessária de mecanismos de confiabilidade que seriam impostos pelo TCP, introduzindo 
+    latência e complexidade sem ganhos significativos.
+
+3.  **Suporte Nativo a Multicast:**
+    * O OSPF utiliza multicast (endereços como 224.0.0.5 e 224.0.0.6) para a descoberta de vizinhos e para a 
+    inundação eficiente de atualizações de LSA dentro de uma área. O UDP é o protocolo de transporte ideal para 
+    operações multicast, pois o TCP, sendo ponto-a-ponto, não as suporta nativamente.
+
 
 ## 🌐 Topologia da Rede
 
 
 ![Diagrama da Topologia da Rede](docs/topologia.jpg)
 
-*Substitua `docs/topologia.png` pelo caminho real da sua imagem. É uma boa prática criar uma pasta `docs` para armazenar imagens e documentação.*
+
 
 ### Como a Topologia Foi Construída
 
