@@ -34,7 +34,7 @@ def extrair_hosts(nome) -> tuple:
 def ping(de, para, ip, res, thread) -> None:
     
     ini = time.time()
-    comando = f"docker exec {de} ping -c 1 -W 0.1 {ip} > /dev/null 2>&1"
+    comando = f"docker exec {de} ping -c 2 -W 0.1 {ip} > /dev/null 2>&1"
     print(f"{comando}")
     codigo = os.system(comando)
     fim = time.time()
